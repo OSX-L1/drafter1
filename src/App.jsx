@@ -22,7 +22,7 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
-const appId = 'layout-drafter-app'; // เพิ่มตัวแปรนี้กลับมาเพื่อให้ระบบทำงานได้
+const appId = 'layout-drafter-app'; 
 
 // --- PDF Generator (ย่อเพื่อความกระชับ) ---
 const generatePDFWithImages = async (items, projectName) => {
@@ -177,84 +177,84 @@ const App = () => {
           
           <div className="flex justify-between items-start mb-4">
             <div>
-              <h1 className="text-2xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
-                <span className="bg-red-600 text-white p-1.5 rounded-lg"><LayoutGrid size={20} /></span>
+              <h1 className="text-3xl font-bold text-slate-800 tracking-tight flex items-center gap-2">
+                <span className="bg-red-600 text-white p-2 rounded-xl"><LayoutGrid size={24} /></span>
                 Drafter<span className="text-red-600">Pro</span>
               </h1>
-              <p className="text-xs text-slate-400 mt-1 font-medium">Bento Design System</p>
+              <p className="text-sm text-slate-400 mt-1 font-medium">Bento Design System</p>
             </div>
             {/* Login Status */}
             {user?.isAnonymous === false ? (
                <div onClick={handleLogout} className="cursor-pointer group flex items-center gap-2 bg-slate-100 hover:bg-red-50 px-3 py-1.5 rounded-full transition-all border border-transparent hover:border-red-100">
                  {user.photoURL ? 
-                   <img src={user.photoURL} className="w-6 h-6 rounded-full" alt="user" /> : 
-                   <div className="w-6 h-6 rounded-full bg-red-600 text-white flex items-center justify-center text-xs font-bold">{user.email?.[0].toUpperCase()}</div>
+                   <img src={user.photoURL} className="w-8 h-8 rounded-full" alt="user" /> : 
+                   <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">{user.email?.[0].toUpperCase()}</div>
                  }
-                 <span className="text-xs font-bold text-slate-600 group-hover:text-red-600 hidden sm:inline">ออกระบบ</span>
+                 <span className="text-sm font-bold text-slate-600 group-hover:text-red-600 hidden sm:inline">ออกระบบ</span>
                </div>
             ) : (
-               <button onClick={handleGoogleLogin} className="flex items-center gap-2 bg-slate-900 hover:bg-black text-white px-4 py-2 rounded-full text-xs font-bold shadow-lg shadow-slate-300 transition-transform active:scale-95">
-                 <LogIn size={14} /> Login Gmail
+               <button onClick={handleGoogleLogin} className="flex items-center gap-2 bg-slate-900 hover:bg-black text-white px-5 py-3 rounded-full text-sm font-bold shadow-lg shadow-slate-300 transition-transform active:scale-95">
+                 <LogIn size={16} /> Login Gmail
                </button>
             )}
           </div>
 
           <div className="grid grid-cols-2 gap-3 mt-6">
-             <button onClick={() => setShowLoadModal(true)} className="flex flex-col items-center justify-center gap-1 bg-slate-50 hover:bg-slate-100 text-slate-600 py-3 rounded-2xl border border-slate-100 transition-all active:scale-95 group">
-               <FolderOpen size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
-               <span className="text-xs font-bold">เปิดงานเก่า</span>
+             <button onClick={() => setShowLoadModal(true)} className="flex flex-col items-center justify-center gap-1 bg-slate-50 hover:bg-slate-100 text-slate-600 py-4 rounded-2xl border border-slate-100 transition-all active:scale-95 group">
+               <FolderOpen size={24} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+               <span className="text-sm font-bold">เปิดงานเก่า</span>
              </button>
-             <button onClick={handleSave} className="flex flex-col items-center justify-center gap-1 bg-slate-50 hover:bg-slate-100 text-slate-600 py-3 rounded-2xl border border-slate-100 transition-all active:scale-95 group">
-               <Save size={20} className="text-slate-400 group-hover:text-red-500 transition-colors" />
-               <span className="text-xs font-bold">บันทึกงาน</span>
+             <button onClick={handleSave} className="flex flex-col items-center justify-center gap-1 bg-slate-50 hover:bg-slate-100 text-slate-600 py-4 rounded-2xl border border-slate-100 transition-all active:scale-95 group">
+               <Save size={24} className="text-slate-400 group-hover:text-red-500 transition-colors" />
+               <span className="text-sm font-bold">บันทึกงาน</span>
              </button>
           </div>
         </div>
 
         {/* Input Form Card */}
         <div className="bg-white rounded-3xl p-6 shadow-xl shadow-slate-200/50 flex-1 flex flex-col">
-          <h2 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-            <Plus size={16} /> สร้างชิ้นงานใหม่
+          <h2 className="text-base font-bold text-slate-400 uppercase tracking-wider mb-6 flex items-center gap-2">
+            <Plus size={20} /> สร้างชิ้นงานใหม่
           </h2>
           
-          <form onSubmit={addItem} className="flex flex-col gap-4">
+          <form onSubmit={addItem} className="flex flex-col gap-5">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 pl-2">กว้าง ({formData.unit})</label>
+                <label className="text-sm font-bold text-slate-400 pl-2">กว้าง ({formData.unit})</label>
                 <input type="number" step="any" name="width" value={formData.width} onChange={handleInputChange} 
-                  className="w-full p-3 bg-slate-50 border-none rounded-2xl text-slate-800 font-bold text-lg text-center focus:ring-2 focus:ring-red-100 outline-none transition-all placeholder:text-slate-300" placeholder="0" />
+                  className="w-full p-3 bg-slate-50 border-none rounded-2xl text-slate-800 font-bold text-xl text-center focus:ring-2 focus:ring-red-100 outline-none transition-all placeholder:text-slate-300" placeholder="0" />
               </div>
               <div className="space-y-1">
-                <label className="text-[10px] font-bold text-slate-400 pl-2">สูง ({formData.unit})</label>
+                <label className="text-sm font-bold text-slate-400 pl-2">สูง ({formData.unit})</label>
                 <input type="number" step="any" name="height" value={formData.height} onChange={handleInputChange} 
-                  className="w-full p-3 bg-slate-50 border-none rounded-2xl text-slate-800 font-bold text-lg text-center focus:ring-2 focus:ring-red-100 outline-none transition-all placeholder:text-slate-300" placeholder="0" />
+                  className="w-full p-3 bg-slate-50 border-none rounded-2xl text-slate-800 font-bold text-xl text-center focus:ring-2 focus:ring-red-100 outline-none transition-all placeholder:text-slate-300" placeholder="0" />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 pl-2">รหัสสี / ชื่อสี</label>
+              <label className="text-sm font-bold text-slate-400 pl-2">รหัสสี / ชื่อสี</label>
               <div className="flex items-center bg-slate-50 rounded-2xl px-3 border border-transparent focus-within:border-red-200 focus-within:bg-red-50/30 transition-all">
-                <div className="w-4 h-4 rounded-full border border-slate-200 shadow-sm" style={{backgroundColor: formData.colorCode && (formData.colorCode.startsWith('#') || formData.colorCode.startsWith('rgb')) ? formData.colorCode : '#fff'}}></div>
+                <div className="w-5 h-5 rounded-full border border-slate-200 shadow-sm" style={{backgroundColor: formData.colorCode && (formData.colorCode.startsWith('#') || formData.colorCode.startsWith('rgb')) ? formData.colorCode : '#fff'}}></div>
                 <input type="text" name="colorCode" value={formData.colorCode} onChange={handleInputChange} 
-                  className="w-full p-3 bg-transparent border-none outline-none text-sm font-medium text-slate-700" placeholder="ระบุสี..." />
+                  className="w-full p-3 bg-transparent border-none outline-none text-base font-medium text-slate-700" placeholder="ระบุสี..." />
               </div>
             </div>
 
             <div className="space-y-1">
-              <label className="text-[10px] font-bold text-slate-400 pl-2">ตำแหน่งติดตั้ง</label>
+              <label className="text-sm font-bold text-slate-400 pl-2">ตำแหน่งติดตั้ง</label>
               <input type="text" name="installPos" value={formData.installPos} onChange={handleInputChange} 
-                className="w-full p-3 bg-slate-50 border-none rounded-2xl text-sm font-medium text-slate-700 focus:ring-2 focus:ring-red-100 outline-none transition-all" placeholder="เช่น ห้องนอน 1..." />
+                className="w-full p-3 bg-slate-50 border-none rounded-2xl text-base font-medium text-slate-700 focus:ring-2 focus:ring-red-100 outline-none transition-all" placeholder="เช่น ห้องนอน 1..." />
             </div>
 
             <div className="grid grid-cols-2 gap-4 pt-2">
-               <div className="bg-slate-50 p-1.5 rounded-2xl flex relative">
+               <div className="bg-slate-50 p-1.5 rounded-2xl flex relative h-12">
                  <div className={`absolute top-1.5 bottom-1.5 w-[calc(50%-6px)] bg-white rounded-xl shadow-sm transition-all duration-300 ease-out ${formData.pos === 'R' ? 'translate-x-full left-1.5' : 'left-1.5'}`}></div>
-                 <button type="button" onClick={() => setFormData(p=>({...p, pos:'L'}))} className={`flex-1 py-2 text-xs font-bold rounded-xl relative z-10 transition-colors ${formData.pos==='L'?'text-slate-800':'text-slate-400 hover:text-slate-600'}`}>ซ้าย</button>
-                 <button type="button" onClick={() => setFormData(p=>({...p, pos:'R'}))} className={`flex-1 py-2 text-xs font-bold rounded-xl relative z-10 transition-colors ${formData.pos==='R'?'text-slate-800':'text-slate-400 hover:text-slate-600'}`}>ขวา</button>
+                 <button type="button" onClick={() => setFormData(p=>({...p, pos:'L'}))} className={`flex-1 text-sm font-bold rounded-xl relative z-10 transition-colors ${formData.pos==='L'?'text-slate-800':'text-slate-400 hover:text-slate-600'}`}>ซ้าย</button>
+                 <button type="button" onClick={() => setFormData(p=>({...p, pos:'R'}))} className={`flex-1 text-sm font-bold rounded-xl relative z-10 transition-colors ${formData.pos==='R'?'text-slate-800':'text-slate-400 hover:text-slate-600'}`}>ขวา</button>
                </div>
                
-               <div className="relative">
-                 <select name="unit" value={formData.unit} onChange={handleInputChange} className="w-full h-full appearance-none bg-slate-50 border-none rounded-2xl px-4 text-sm font-bold text-slate-700 focus:ring-2 focus:ring-red-100 outline-none text-center cursor-pointer">
+               <div className="relative h-12">
+                 <select name="unit" value={formData.unit} onChange={handleInputChange} className="w-full h-full appearance-none bg-slate-50 border-none rounded-2xl px-4 text-base font-bold text-slate-700 focus:ring-2 focus:ring-red-100 outline-none text-center cursor-pointer">
                    <option value="cm">cm</option>
                    <option value="mm">mm</option>
                    <option value="m">m</option>
@@ -263,33 +263,33 @@ const App = () => {
                </div>
             </div>
 
-            <button type="submit" className="mt-4 w-full bg-red-600 hover:bg-red-700 active:scale-95 text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200 flex items-center justify-center gap-2 transition-all">
-              <Plus size={20} strokeWidth={3} /> เพิ่มรายการ
+            <button type="submit" className="mt-4 w-full bg-red-600 hover:bg-red-700 active:scale-95 text-white py-4 rounded-2xl text-lg font-bold shadow-lg shadow-red-200 flex items-center justify-center gap-2 transition-all">
+              <Plus size={24} strokeWidth={3} /> เพิ่มรายการ
             </button>
           </form>
         </div>
 
         {/* Action Button */}
-        <button onClick={handleExportPDF} disabled={items.length===0||isGeneratingPDF} className="bg-slate-900 hover:bg-black text-white py-4 rounded-3xl font-bold shadow-xl shadow-slate-300 flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
-           {isGeneratingPDF ? <Loader2 className="animate-spin" /> : <FileText />} 
+        <button onClick={handleExportPDF} disabled={items.length===0||isGeneratingPDF} className="bg-slate-900 hover:bg-black text-white py-5 rounded-3xl text-lg font-bold shadow-xl shadow-slate-300 flex items-center justify-center gap-3 transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed">
+           {isGeneratingPDF ? <Loader2 className="animate-spin" size={24} /> : <FileText size={24} />} 
            <span>Export PDF (A4)</span>
         </button>
       </div>
 
       {/* --- Main Workspace (Canvas) --- */}
-      <div className="flex-1 bg-white rounded-[40px] shadow-sm border border-slate-100 p-6 md:p-8 overflow-y-auto relative min-h-[500px]">
+      <div className="flex-1 bg-white rounded-[40px] shadow-sm border border-slate-100 p-6 md:p-8 overflow-y-auto relative min-h-[600px]">
         {/* Header Overlay */}
         <div className="sticky top-0 z-10 bg-white/80 backdrop-blur-md -mx-4 -mt-4 px-4 py-4 mb-6 border-b border-slate-50 flex justify-between items-end">
            <div>
-             <h2 className="text-3xl font-black text-slate-800 tracking-tight">{currentProjectName}</h2>
-             <div className="flex items-center gap-2 mt-1">
-               <span className="bg-slate-100 text-slate-500 text-[10px] font-bold px-2 py-1 rounded-full uppercase tracking-wider">{new Date().toLocaleDateString('th-TH')}</span>
-               {user?.isAnonymous && <span className="bg-orange-100 text-orange-600 text-[10px] font-bold px-2 py-1 rounded-full">Guest Mode</span>}
+             <h2 className="text-4xl font-black text-slate-800 tracking-tight">{currentProjectName}</h2>
+             <div className="flex items-center gap-2 mt-2">
+               <span className="bg-slate-100 text-slate-500 text-xs font-bold px-3 py-1 rounded-full uppercase tracking-wider">{new Date().toLocaleDateString('th-TH')}</span>
+               {user?.isAnonymous && <span className="bg-orange-100 text-orange-600 text-xs font-bold px-3 py-1 rounded-full">Guest Mode</span>}
              </div>
            </div>
            <div className="text-right">
-             <div className="text-4xl font-black text-red-600 leading-none">{items.length}</div>
-             <div className="text-xs font-bold text-slate-400 uppercase tracking-widest">Items</div>
+             <div className="text-5xl font-black text-red-600 leading-none">{items.length}</div>
+             <div className="text-sm font-bold text-slate-400 uppercase tracking-widest mt-1">Items</div>
            </div>
         </div>
 
@@ -299,53 +299,54 @@ const App = () => {
             <div className="w-24 h-24 bg-slate-50 rounded-full flex items-center justify-center mb-4">
               <Box size={40} className="opacity-50" />
             </div>
-            <p className="text-lg font-bold text-slate-400">เริ่มสร้างโปรเจกต์ของคุณ</p>
-            <p className="text-sm">กรอกข้อมูลทางด้านซ้ายเพื่อเพิ่มรายการ</p>
+            <p className="text-xl font-bold text-slate-400">เริ่มสร้างโปรเจกต์ของคุณ</p>
+            <p className="text-base mt-2">กรอกข้อมูลทางด้านซ้ายเพื่อเพิ่มรายการ</p>
           </div>
         ) : (
-          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
             {items.map((item, index) => (
               <div key={item.id} id={`card-${item.id}`} className="bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-100/50 p-1 relative group hover:border-red-100 hover:shadow-red-100/50 transition-all duration-300 break-inside-avoid">
                 {/* Delete Button */}
-                <button onClick={() => removeItem(item.id)} className="delete-btn absolute top-3 right-3 w-8 h-8 bg-white border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-20">
-                  <Trash2 size={14} />
+                <button onClick={() => removeItem(item.id)} className="delete-btn absolute top-3 right-3 w-10 h-10 bg-white border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-20">
+                  <Trash2 size={18} />
                 </button>
 
                 {/* Card Header */}
-                <div className="flex justify-between items-center px-4 py-3 border-b border-slate-50">
-                  <span className="w-8 h-8 bg-slate-900 text-white rounded-full flex items-center justify-center text-sm font-bold shadow-md shadow-slate-200">
+                <div className="flex justify-between items-center px-5 py-4 border-b border-slate-50">
+                  <span className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center text-base font-bold shadow-md shadow-slate-200">
                     {index + 1}
                   </span>
-                  <span className={`text-[10px] font-black uppercase tracking-widest px-2 py-1 rounded-lg ${item.pos === 'L' ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-600'}`}>
+                  <span className={`text-xs font-black uppercase tracking-widest px-3 py-1.5 rounded-lg ${item.pos === 'L' ? 'bg-slate-100 text-slate-600' : 'bg-red-50 text-red-600'}`}>
                     {item.pos === 'L' ? 'Left Side' : 'Right Side'}
                   </span>
                 </div>
 
                 {/* Drawing Area */}
-                <div className="h-[240px] flex items-center justify-center relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] rounded-b-[20px] m-1 bg-slate-50/50">
-                   <div className={`relative w-[140px] h-[140px] bg-white border-2 flex flex-col items-center justify-center shadow-xl transition-all duration-500 ${item.pos==='L' ? 'border-slate-800 shadow-slate-200' : 'border-red-500 shadow-red-100'}`}>
+                <div className="h-[320px] flex items-center justify-center relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] rounded-b-[20px] m-1 bg-slate-50/50">
+                   {/* Increased visual size */}
+                   <div className={`relative w-[220px] h-[220px] bg-white border-2 flex flex-col items-center justify-center shadow-xl transition-all duration-500 ${item.pos==='L' ? 'border-slate-800 shadow-slate-200' : 'border-red-500 shadow-red-100'}`}>
                       {/* Labels */}
-                      <div className="absolute -top-3 px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] font-bold text-slate-600 shadow-sm whitespace-nowrap">
+                      <div className="absolute -top-4 px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 shadow-sm whitespace-nowrap">
                         {item.w} {item.unit}
                       </div>
-                      <div className={`absolute top-1/2 -translate-y-1/2 ${item.pos==='L'?'-left-3':'-right-3'} px-2 py-0.5 bg-white border border-slate-200 rounded-md text-[10px] font-bold text-slate-600 shadow-sm whitespace-nowrap ${item.pos==='L'?'-rotate-90':'rotate-90'}`}>
+                      <div className={`absolute top-1/2 -translate-y-1/2 ${item.pos==='L'?'-left-4':'-right-4'} px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 shadow-sm whitespace-nowrap ${item.pos==='L'?'-rotate-90':'rotate-90'}`}>
                         {item.h} {item.unit}
                       </div>
 
                       {/* Info Content */}
-                      <div className="text-center p-2 w-full">
+                      <div className="text-center p-3 w-full">
                         {item.installPos && (
-                          <div className="mb-2">
-                            <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Position</p>
-                            <p className="text-xs font-bold text-slate-800 leading-tight line-clamp-2">{item.installPos}</p>
+                          <div className="mb-3">
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Position</p>
+                            <p className="text-sm font-bold text-slate-800 leading-tight line-clamp-2">{item.installPos}</p>
                           </div>
                         )}
                         {item.colorCode && (
                           <div className="flex flex-col items-center">
-                            <p className="text-[8px] text-slate-400 font-bold uppercase tracking-wider mb-0.5">Color</p>
-                            <div className="flex items-center gap-1.5 bg-slate-50 px-2 py-1 rounded-md border border-slate-100">
-                              <div className="w-3 h-3 rounded-full border border-slate-200 shadow-sm" style={{backgroundColor: item.colorCode.startsWith('#') || item.colorCode.startsWith('rgb') ? item.colorCode : '#e2e8f0'}}></div>
-                              <span className="text-[10px] font-bold text-slate-600 truncate max-w-[60px]">{item.colorCode}</span>
+                            <p className="text-[10px] text-slate-400 font-bold uppercase tracking-wider mb-1">Color</p>
+                            <div className="flex items-center gap-2 bg-slate-50 px-3 py-1.5 rounded-lg border border-slate-100">
+                              <div className="w-4 h-4 rounded-full border border-slate-200 shadow-sm" style={{backgroundColor: item.colorCode.startsWith('#') || item.colorCode.startsWith('rgb') ? item.colorCode : '#e2e8f0'}}></div>
+                              <span className="text-xs font-bold text-slate-600 truncate max-w-[80px]">{item.colorCode}</span>
                             </div>
                           </div>
                         )}
@@ -361,17 +362,17 @@ const App = () => {
       {/* --- Modals (Styled) --- */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-sm overflow-hidden p-6 border border-white/50">
+          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-md overflow-hidden p-8 border border-white/50">
              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-bold text-xl text-slate-800">บันทึกโปรเจกต์</h3>
-                <button onClick={()=>setShowSaveModal(false)} className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition"><X size={18}/></button>
+                <h3 className="font-bold text-2xl text-slate-800">บันทึกโปรเจกต์</h3>
+                <button onClick={()=>setShowSaveModal(false)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition"><X size={20}/></button>
              </div>
-             <div className="space-y-4">
+             <div className="space-y-6">
                 <div>
-                  <label className="text-xs font-bold text-slate-400 ml-2 mb-1 block">ชื่อโปรเจกต์</label>
-                  <input value={saveNameInput} onChange={e=>setSaveNameInput(e.target.value)} className="w-full p-4 bg-slate-50 rounded-2xl font-bold text-slate-800 outline-none focus:ring-2 focus:ring-red-100 transition" placeholder="ตั้งชื่องาน..." autoFocus />
+                  <label className="text-sm font-bold text-slate-400 ml-2 mb-2 block">ชื่อโปรเจกต์</label>
+                  <input value={saveNameInput} onChange={e=>setSaveNameInput(e.target.value)} className="w-full p-5 bg-slate-50 rounded-2xl text-xl font-bold text-slate-800 outline-none focus:ring-2 focus:ring-red-100 transition" placeholder="ตั้งชื่องาน..." autoFocus />
                 </div>
-                <button onClick={confirmSaveProject} className="w-full bg-red-600 hover:bg-red-700 text-white py-4 rounded-2xl font-bold shadow-lg shadow-red-200 transition-transform active:scale-95 flex items-center justify-center gap-2">
+                <button onClick={confirmSaveProject} className="w-full bg-red-600 hover:bg-red-700 text-white py-5 rounded-2xl text-lg font-bold shadow-lg shadow-red-200 transition-transform active:scale-95 flex items-center justify-center gap-2">
                   {isLoading ? <Loader2 className="animate-spin" /> : <Check />} ยืนยันการบันทึก
                 </button>
              </div>
@@ -381,25 +382,25 @@ const App = () => {
 
       {showLoadModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-md max-h-[80vh] flex flex-col p-6 border border-white/50">
-            <div className="flex justify-between items-center mb-4">
-              <h3 className="font-bold text-xl text-slate-800 flex items-center gap-2"><FolderOpen size={20} className="text-red-500"/> งานที่บันทึกไว้</h3>
-              <button onClick={()=>setShowLoadModal(false)} className="w-8 h-8 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition"><X size={18}/></button>
+          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-lg max-h-[80vh] flex flex-col p-8 border border-white/50">
+            <div className="flex justify-between items-center mb-6">
+              <h3 className="font-bold text-2xl text-slate-800 flex items-center gap-3"><FolderOpen size={28} className="text-red-500"/> งานที่บันทึกไว้</h3>
+              <button onClick={()=>setShowLoadModal(false)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-slate-200 transition"><X size={20}/></button>
             </div>
-            <div className="overflow-y-auto flex-1 -mx-2 px-2 space-y-2">
+            <div className="overflow-y-auto flex-1 -mx-2 px-2 space-y-3">
               {savedProjects.length === 0 ? (
-                <div className="text-center py-10 text-slate-400">ไม่มีงานที่บันทึกไว้</div>
+                <div className="text-center py-16 text-slate-400 text-lg">ไม่มีงานที่บันทึกไว้</div>
               ) : (
                 savedProjects.map(p => (
-                  <div key={p.id} onClick={()=>loadProject(p)} className="p-4 bg-slate-50 hover:bg-white hover:shadow-md border border-slate-100 rounded-2xl cursor-pointer flex justify-between items-center transition-all group">
+                  <div key={p.id} onClick={()=>loadProject(p)} className="p-5 bg-slate-50 hover:bg-white hover:shadow-lg border border-slate-100 rounded-3xl cursor-pointer flex justify-between items-center transition-all group">
                     <div>
-                      <div className="font-bold text-slate-800 text-sm">{p.name}</div>
-                      <div className="text-[10px] font-bold text-slate-400 mt-1 flex gap-2">
-                        <span className="bg-white px-1.5 py-0.5 rounded border border-slate-100">{p.items?.length || 0} รายการ</span>
+                      <div className="font-bold text-slate-800 text-base">{p.name}</div>
+                      <div className="text-xs font-bold text-slate-400 mt-2 flex gap-3">
+                        <span className="bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">{p.items?.length || 0} รายการ</span>
                         <span>{p.updatedAt ? new Date(p.updatedAt.seconds * 1000).toLocaleDateString() : '-'}</span>
                       </div>
                     </div>
-                    <button onClick={(e)=>deleteProject(p.id,e)} className="w-8 h-8 rounded-full bg-white border border-slate-100 text-slate-300 hover:text-red-500 hover:border-red-100 flex items-center justify-center transition-all"><Trash2 size={14}/></button>
+                    <button onClick={(e)=>deleteProject(p.id,e)} className="w-10 h-10 rounded-full bg-white border border-slate-100 text-slate-300 hover:text-red-500 hover:border-red-100 flex items-center justify-center transition-all"><Trash2 size={18}/></button>
                   </div>
                 ))
               )}
