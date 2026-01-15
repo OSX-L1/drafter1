@@ -22,6 +22,7 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
+const appId = 'layout-drafter-app'; // เพิ่มตัวแปรนี้กลับมาเพื่อให้ระบบทำงานได้
 
 // --- PDF Generator (ย่อเพื่อความกระชับ) ---
 const generatePDFWithImages = async (items, projectName) => {
