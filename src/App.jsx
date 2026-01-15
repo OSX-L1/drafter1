@@ -34,36 +34,87 @@ const generatePDFWithImages = async (items, projectName) => {
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
   const margin = 10;
-  const cols = 2; const rows = 3; const itemsPerPage = cols * rows;
+  
+  // ตั้งค่า Grid
+  const cols = 2; 
+  const rows = 3; 
+  const itemsPerPage = cols * rows;
   const cardWidth = (pageWidth - (margin * 3)) / cols;
-  const cardHeight = (pageHeight - 40 - (margin * 4)) / rows;
+  const cardHeight = (pageHeight - 30 - (margin * 4)) / rows; // ลด Header space ลงนิดหน่อย
 
-  doc.setFontSize(18); doc.text(projectName || "Layout Draft", pageWidth/2, 15, { align: "center" });
-  doc.setFontSize(10); doc.text(`${new Date().toLocaleString()}`, pageWidth/2, 22, { align: "center" });
-  doc.line(margin, 25, pageWidth-margin, 25);
+  // Header (ระวังเรื่อง Font ไทยใน Header อาจจะไม่แสดงผลถ้าไม่ได้ฝัง Font แต่ในรูปภาพจะแสดงปกติ)
+  doc.setFontSize(14); 
+  doc.text("Layout Draft Document", pageWidth/2, 10, { align: "center" });
+  doc.setFontSize(10); 
+  doc.text(`${new Date().toLocaleString()}`, pageWidth/2, 16, { align: "center" });
+  doc.line(margin, 20, pageWidth-margin, 20);
 
   for (let i = 0; i < items.length; i++) {
     const item = items[i];
-    if (i > 0 && i % itemsPerPage === 0) doc.addPage();
+    if (i > 0 && i % itemsPerPage === 0) {
+      doc.addPage();
+      // วาดเส้นคั่นหน้าใหม่ (ถ้าต้องการ)
+      // doc.line(margin, 20, pageWidth-margin, 20);
+    }
+    
     const pageIndex = i % itemsPerPage;
     const col = pageIndex % cols;
     const row = Math.floor(pageIndex / cols);
+    
     const x = margin + (col * (cardWidth + margin));
-    const y = 30 + (row * (cardHeight + margin));
+    const y = 25 + (row * (cardHeight + margin)); // เริ่มวาดที่ y=25
 
     const element = document.getElementById(`card-${item.id}`);
     if (element) {
+      // ซ่อนปุ่มลบชั่วคราว
       const delBtn = element.querySelector('.delete-btn');
       if(delBtn) delBtn.style.display = 'none';
+      
       try {
-        const canvas = await window.html2canvas(element, { scale: 2, backgroundColor: '#ffffff', logging: false });
-        const imgData = canvas.toDataURL('image/jpeg', 0.8);
+        // จับภาพหน้าจอด้วยการตั้งค่าที่ละเอียดขึ้น
+        const canvas = await window.html2canvas(element, { 
+          scale: 2, // เพิ่มความชัด
+          backgroundColor: '#ffffff', 
+          logging: false,
+          useCORS: true, // รองรับ Cross-origin
+          scrollY: -window.scrollY, // *** แก้ปัญหาภาพขาดเวลาเลื่อนหน้าจอ ***
+          windowWidth: document.documentElement.offsetWidth,
+          windowHeight: document.documentElement.offsetHeight
+        });
+        
+        const imgData = canvas.toDataURL('image/jpeg', 0.9); // คุณภาพสูง
         const imgProps = doc.getImageProperties(imgData);
-        let finalH = (imgProps.height * cardWidth) / imgProps.width;
-        if (finalH > cardHeight) finalH = cardHeight;
-        doc.addImage(imgData, 'JPEG', x, y, cardWidth, finalH);
-      } catch (err) { console.error(err); } 
-      finally { if(delBtn) delBtn.style.display = 'block'; }
+        
+        // --- คำนวณสัดส่วนแบบ Proportional Fit (ไม่บีบรูป) ---
+        const imgW = imgProps.width;
+        const imgH = imgProps.height;
+        const ratio = imgW / imgH;
+        
+        // คำนวณขนาดที่จะวาดจริง โดยให้พอดีกรอบ (Fit Contain)
+        let printW = cardWidth;
+        let printH = cardWidth / ratio;
+
+        // ถ้าสูงเกินกรอบ ให้ยึดความสูงเป็นหลักแทน
+        if (printH > cardHeight) {
+            printH = cardHeight;
+            printW = cardHeight * ratio;
+        }
+
+        // จัดกึ่งกลางภาพในกรอบ
+        const printX = x + (cardWidth - printW) / 2;
+        const printY = y + (cardHeight - printH) / 2;
+
+        doc.addImage(imgData, 'JPEG', printX, printY, printW, printH);
+        
+        // (Optional) วาดกรอบบางๆ รอบรูปเพื่อความสวยงาม
+        // doc.setDrawColor(240);
+        // doc.rect(x, y, cardWidth, cardHeight);
+
+      } catch (err) { 
+        console.error("Error capturing card:", err); 
+      } finally { 
+        if(delBtn) delBtn.style.display = 'block'; 
+      }
     }
   }
   doc.save(`${projectName || "layout"}.pdf`);
