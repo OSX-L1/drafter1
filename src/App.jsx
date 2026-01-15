@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { Plus, Trash2, LayoutGrid, FileText, Save, FolderOpen, Loader2, LogIn, LogOut, User, Box } from 'lucide-react';
+import { Plus, Trash2, LayoutGrid, FileText, Save, FolderOpen, Loader2, LogIn, Check, X, Box } from 'lucide-react';
 import { initializeApp } from 'firebase/app';
 import { getAuth, signInAnonymously, onAuthStateChanged, signInWithPopup, GoogleAuthProvider, signOut } from 'firebase/auth';
 import { getFirestore, collection, doc, setDoc, getDocs, deleteDoc, query, orderBy, serverTimestamp } from 'firebase/firestore';
 import { getAnalytics } from "firebase/analytics";
 
 // --- Firebase Configuration ---
-// ใช้ค่าเดิมของคุณ
+// ใช้ค่าเดิมของคุณ (ตรวจสอบว่าถูกต้อง)
 const firebaseConfig = {
   apiKey: "AIzaSyAIKYR1Wt565YYL-UyJ7H0vttpCbryS4RU",
   authDomain: "sunny3-da676.firebaseapp.com",
@@ -22,9 +22,11 @@ const analytics = getAnalytics(app);
 const auth = getAuth(app);
 const db = getFirestore(app);
 const googleProvider = new GoogleAuthProvider();
-const appId = 'layout-drafter-app'; 
 
-// --- PDF Generator (ย่อเพื่อความกระชับ) ---
+// กำหนด appId ไว้ที่นี่เพื่อความชัวร์
+const APP_ID_KEY = 'layout-drafter-app'; 
+
+// --- PDF Generator ---
 const generatePDFWithImages = async (items, projectName) => {
   if (!window.jspdf || !window.html2canvas) { alert("Loading PDF engine..."); return; }
   const { jsPDF } = window.jspdf;
@@ -88,14 +90,17 @@ const App = () => {
 
     const unsubscribe = onAuthStateChanged(auth, (u) => {
       setUser(u);
-      if (u) fetchProjects(u.uid);
-      else signInAnonymously(auth); // Fallback to Guest
+      if (u) {
+          fetchProjects(u.uid);
+      } else {
+          signInAnonymously(auth).catch(err => console.error("Guest login failed:", err));
+      }
     });
     return () => unsubscribe();
   }, []);
 
   const handleGoogleLogin = async () => {
-    try { await signInWithPopup(auth, googleProvider); } catch (e) { alert(e.message); }
+    try { await signInWithPopup(auth, googleProvider); } catch (e) { alert("Login failed: " + e.message); }
   };
 
   const handleLogout = async () => {
@@ -104,10 +109,11 @@ const App = () => {
 
   const fetchProjects = async (userId) => {
     try {
-      const q = query(collection(db, 'artifacts', appId, 'users', userId, 'projects'), orderBy('updatedAt', 'desc'));
+      // ใช้ APP_ID_KEY ที่ประกาศไว้ด้านบน
+      const q = query(collection(db, 'artifacts', APP_ID_KEY, 'users', userId, 'projects'), orderBy('updatedAt', 'desc'));
       const qs = await getDocs(q);
       setSavedProjects(qs.docs.map(d => ({ id: d.id, ...d.data() })));
-    } catch (e) { console.error(e); }
+    } catch (e) { console.error("Fetch error:", e); }
   };
 
   const addItem = (e) => {
@@ -121,7 +127,7 @@ const App = () => {
 
   const handleSave = async () => {
     if (user?.isAnonymous) {
-      if(!confirm("คุณกำลังใช้งานแบบ Guest ข้อมูลอาจหายได้ถ้าย้ายเครื่อง\nแนะนำให้ Login ด้วย Google เพื่อบันทึกถาวร\n\nต้องการบันทึกแบบ Guest ต่อไปหรือไม่?")) return;
+      if(!confirm("คุณกำลังใช้งานแบบ Guest ข้อมูลอาจหายได้ถ้าย้ายเครื่อง\nต้องการบันทึกแบบ Guest ต่อไปหรือไม่?")) return;
     }
     setSaveNameInput(currentProjectName);
     setShowSaveModal(true);
@@ -129,16 +135,21 @@ const App = () => {
 
   const confirmSaveProject = async () => {
     if (!saveNameInput.trim()) return;
+    if (!user) return alert("ไม่พบข้อมูลผู้ใช้ กรุณารีเฟรชหน้าเว็บ");
+
     setIsLoading(true);
     try {
       const pid = `proj_${Date.now()}`;
-      await setDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'projects', pid), {
+      await setDoc(doc(db, 'artifacts', APP_ID_KEY, 'users', user.uid, 'projects', pid), {
         name: saveNameInput, items: items, updatedAt: serverTimestamp()
       });
       setCurrentProjectName(saveNameInput);
       await fetchProjects(user.uid);
       setShowSaveModal(false);
-    } catch (e) { alert(e.message); } 
+    } catch (e) { 
+        alert("บันทึกไม่สำเร็จ: " + e.message); 
+        console.error(e);
+    } 
     finally { setIsLoading(false); }
   };
 
@@ -151,8 +162,8 @@ const App = () => {
   const deleteProject = async (pid, e) => {
     e.stopPropagation();
     if(confirm("ลบงานนี้ถาวร?")) {
-      await deleteDoc(doc(db, 'artifacts', appId, 'users', user.uid, 'projects', pid));
-      fetchProjects(user.uid);
+      await deleteDoc(doc(db, 'artifacts', APP_ID_KEY, 'users', user.uid, 'projects', pid));
+      if(user) fetchProjects(user.uid);
     }
   };
 
@@ -163,6 +174,22 @@ const App = () => {
   };
 
   const handleInputChange = (e) => setFormData(prev => ({ ...prev, [e.target.name]: e.target.value }));
+
+  // Helper เพื่อแสดงผลวันที่แบบปลอดภัย (ไม่จอขาว)
+  const formatDate = (timestamp) => {
+      if (!timestamp || !timestamp.seconds) return '-';
+      try {
+          return new Date(timestamp.seconds * 1000).toLocaleDateString('th-TH');
+      } catch (e) {
+          return '-';
+      }
+  };
+
+  // Helper เพื่อแสดงชื่อย่อ User แบบปลอดภัย
+  const getUserInitials = (u) => {
+      if (!u || !u.email) return 'G';
+      return u.email.charAt(0).toUpperCase();
+  };
 
   // --- UI Components ---
   return (
@@ -184,11 +211,11 @@ const App = () => {
               <p className="text-sm text-slate-400 mt-1 font-medium">Bento Design System</p>
             </div>
             {/* Login Status */}
-            {user?.isAnonymous === false ? (
+            {user && !user.isAnonymous ? (
                <div onClick={handleLogout} className="cursor-pointer group flex items-center gap-2 bg-slate-100 hover:bg-red-50 px-3 py-1.5 rounded-full transition-all border border-transparent hover:border-red-100">
                  {user.photoURL ? 
                    <img src={user.photoURL} className="w-8 h-8 rounded-full" alt="user" /> : 
-                   <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">{user.email?.[0].toUpperCase()}</div>
+                   <div className="w-8 h-8 rounded-full bg-red-600 text-white flex items-center justify-center text-sm font-bold">{getUserInitials(user)}</div>
                  }
                  <span className="text-sm font-bold text-slate-600 group-hover:text-red-600 hidden sm:inline">ออกระบบ</span>
                </div>
@@ -306,12 +333,10 @@ const App = () => {
           <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3">
             {items.map((item, index) => (
               <div key={item.id} id={`card-${item.id}`} className="bg-white rounded-3xl border border-slate-100 shadow-lg shadow-slate-100/50 p-1 relative group hover:border-red-100 hover:shadow-red-100/50 transition-all duration-300 break-inside-avoid">
-                {/* Delete Button */}
                 <button onClick={() => removeItem(item.id)} className="delete-btn absolute top-3 right-3 w-10 h-10 bg-white border border-slate-100 text-slate-400 hover:text-red-500 hover:border-red-100 rounded-full flex items-center justify-center shadow-sm opacity-0 group-hover:opacity-100 transition-all z-20">
                   <Trash2 size={18} />
                 </button>
 
-                {/* Card Header */}
                 <div className="flex justify-between items-center px-5 py-4 border-b border-slate-50">
                   <span className="w-10 h-10 bg-slate-900 text-white rounded-full flex items-center justify-center text-base font-bold shadow-md shadow-slate-200">
                     {index + 1}
@@ -321,11 +346,8 @@ const App = () => {
                   </span>
                 </div>
 
-                {/* Drawing Area */}
                 <div className="h-[320px] flex items-center justify-center relative bg-[radial-gradient(#e5e7eb_1px,transparent_1px)] [background-size:16px_16px] rounded-b-[20px] m-1 bg-slate-50/50">
-                   {/* Increased visual size */}
                    <div className={`relative w-[220px] h-[220px] bg-white border-2 flex flex-col items-center justify-center shadow-xl transition-all duration-500 ${item.pos==='L' ? 'border-slate-800 shadow-slate-200' : 'border-red-500 shadow-red-100'}`}>
-                      {/* Labels */}
                       <div className="absolute -top-4 px-3 py-1 bg-white border border-slate-200 rounded-lg text-sm font-bold text-slate-600 shadow-sm whitespace-nowrap">
                         {item.w} {item.unit}
                       </div>
@@ -333,7 +355,6 @@ const App = () => {
                         {item.h} {item.unit}
                       </div>
 
-                      {/* Info Content */}
                       <div className="text-center p-3 w-full">
                         {item.installPos && (
                           <div className="mb-3">
@@ -359,10 +380,10 @@ const App = () => {
         )}
       </div>
 
-      {/* --- Modals (Styled) --- */}
+      {/* --- Modals (Fixed) --- */}
       {showSaveModal && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
-          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-md overflow-hidden p-8 border border-white/50">
+          <div className="bg-white rounded-[32px] shadow-2xl w-full max-w-sm overflow-hidden p-8 border border-white/50">
              <div className="flex justify-between items-center mb-6">
                 <h3 className="font-bold text-2xl text-slate-800">บันทึกโปรเจกต์</h3>
                 <button onClick={()=>setShowSaveModal(false)} className="w-10 h-10 rounded-full bg-slate-100 flex items-center justify-center text-slate-500 hover:bg-red-50 hover:text-red-500 transition"><X size={20}/></button>
@@ -397,7 +418,8 @@ const App = () => {
                       <div className="font-bold text-slate-800 text-base">{p.name}</div>
                       <div className="text-xs font-bold text-slate-400 mt-2 flex gap-3">
                         <span className="bg-white px-2 py-1 rounded-md border border-slate-100 shadow-sm">{p.items?.length || 0} รายการ</span>
-                        <span>{p.updatedAt ? new Date(p.updatedAt.seconds * 1000).toLocaleDateString() : '-'}</span>
+                        {/* ใช้วิธีแสดงวันที่แบบปลอดภัย */}
+                        <span>{formatDate(p.updatedAt)}</span>
                       </div>
                     </div>
                     <button onClick={(e)=>deleteProject(p.id,e)} className="w-10 h-10 rounded-full bg-white border border-slate-100 text-slate-300 hover:text-red-500 hover:border-red-100 flex items-center justify-center transition-all"><Trash2 size={18}/></button>
