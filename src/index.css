@@ -1,0 +1,35 @@
+/* โหลด Inter (ตัวแทน SF Pro) และ Noto Sans Thai (ภาษาไทยแบบ Modern Apple) */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+body {
+    margin: 0;
+    /* SF Pro Stack:
+       1. -apple-system: เรียกใช้ SF Pro บน iOS/Mac
+       2. BlinkMacSystemFont: เรียกใช้บน Chrome Mac
+       3. Inter: ตัวตายตัวแทนสำหรับ Windows/Android
+       4. Noto Sans Thai: ภาษาไทยสไตล์ Modern
+    */
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "SF Pro Display", "Inter", "Noto Sans Thai", sans-serif;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    background-color: #f2f2f7; 
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 4px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
